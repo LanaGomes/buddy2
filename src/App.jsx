@@ -1,9 +1,14 @@
-import { useState } from "react";
+import { GradientButton, LinkButton } from "./components/Buttons";
 
 import "./App.css";
 
 function App() {
-  return <></>;
+  return (
+    <>
+      <GradientButton>clique aqui</GradientButton>
+      <LinkButton>Voltar</LinkButton>
+    </>
+  );
 }
 
 export default App;
