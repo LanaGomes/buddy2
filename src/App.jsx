@@ -1,12 +1,12 @@
 import { GradientButton, LinkButton } from "./components/Buttons";
+import Navbar from "./components/NavBar";
 
 import "./App.css";
 
 function App() {
   return (
     <>
-      <GradientButton>clique aqui</GradientButton>
-      <LinkButton>Voltar</LinkButton>
+      <Navbar />
     </>
   );
 }
