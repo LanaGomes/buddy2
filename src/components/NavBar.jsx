@@ -1,5 +1,5 @@
 import logoMedio from "../images/logoMedio.png";
-import menuIcon from "../images/menuIcon.png";
+import { AlignJustify } from "lucide-react";
 
 function NavBar() {
   return (
@@ -8,7 +8,7 @@ function NavBar() {
         <img src={logoMedio}></img>
       </a>
       <a>
-        <img src={menuIcon}></img>
+        <AlignJustify color="#adb0be" size={48} />
       </a>
     </div>
   );

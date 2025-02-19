@@ -1,12 +1,13 @@
-import { GradientButton, LinkButton } from "./components/Buttons";
 import Navbar from "./components/NavBar";
 
 import "./App.css";
+import Home from "./pages/Home";
 
 function App() {
   return (
     <>
       <Navbar />
+      <Home />
     </>
   );
 }
