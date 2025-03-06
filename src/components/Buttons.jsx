@@ -2,7 +2,7 @@ export function GradientButton({ children, onClick, className = "" }) {
   return (
     <button
       onClick={onclick}
-      className={` ${className} tw:rounded-xl tw:font-medium tw:bg-gradient-to-r tw:from-darkGradient tw:to-lightGradient tw:text-darkest-blue`}
+      className={` ${className} tw:rounded-full tw:font-medium tw:bg-gradient-to-r tw:from-darkGradient tw:to-lightGradient tw:text-darkest-blue`}
     >
       {children}
     </button>

@@ -3,6 +3,8 @@ import dayjs from "dayjs";
 import "dayjs/locale/pt-br";
 import { useState } from "react";
 import Tituloh2 from "../components/Tituloh2";
+import { GradientButton } from "../components/Buttons";
+import plusButton from "../images/+Button.png";
 
 dayjs.locale("pt-br");
 
@@ -38,18 +40,29 @@ function Home() {
         />
       </nav>
       <section className="saldoContainer tw:mx-6">
-        <div className="tw:py-4 tw:px-2 tw:border tw:border-lightest-blue tw:rounded-lg">
+        <div className="tw:pt-4 tw:pb-2 tw:px-5 tw:border tw:border-lightest-blue tw:rounded-lg">
           <div className="tw:flex tw:justify-center tw:mb-5 tw:mt-3">
             <Tituloh2 text="Saldo" />
             <p className="tw:text-darkest-blue tw:text-3xl  ">: -R$30,00 </p>
           </div>
-        </div>
-        <div className="tw:text-light-blue tw:text-xs tw:text-left tw:mt-2">
-          {`Cumulativo do dia 1° de ${currentMonth.format(
-            "MMMM [de] YYYY"
-          )} ao dia de hoje (${dayjs().format("DD/MM/YYYY")})`}
+          <div className="tw:text-light-blue tw:text-xs tw:text-left tw:mt-2">
+            {`Cumulativo do dia 1° de ${currentMonth
+              .format("MMMM [de] YYYY")
+              .toUpperCase()} ao dia de hoje (${dayjs().format("DD/MM/YYYY")})`}
+          </div>
         </div>
       </section>
+      <div className="tw:mt-12">
+        <GradientButton className="tw:px-15 tw:py-3 tw:text-3xl ">
+          Extrato
+        </GradientButton>
+      </div>
+      <nav className="tw:mt-20 ">
+        <p className="tw:text-dark-blue">Adicionar Saída</p>
+        <a className="tw:flex tw:justify-center tw:mt-4">
+          <img src={plusButton}></img>
+        </a>
+      </nav>
     </div>
   );
 }
