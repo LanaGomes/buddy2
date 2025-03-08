@@ -1,16 +1,33 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import dayjs from "dayjs";
 import "dayjs/locale/pt-br";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Tituloh2 from "../components/Tituloh2";
 import { GradientButton } from "../components/Buttons";
 import plusButton from "../images/+Button.png";
 import { Link } from "react-router-dom";
+import { initializeApp } from "firebase/app";
+import { getFirestore, collection, getDocs, addDoc } from "firebase/firestore";
 
 dayjs.locale("pt-br");
 
+const firebaseConfig = {
+  apiKey: "AIzaSyCGK2Xq10StMJ_TOVhJqBqaLn5MlIWnRM0",
+  authDomain: "buddy-300c1.firebaseapp.com",
+  projectId: "buddy-300c1",
+  storageBucket: "buddy-300c1.firebasestorage.app",
+  messagingSenderId: "162654662766",
+  appId: "1:162654662766:web:4a53ac2b78b735598b367f",
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
 function Home() {
   const [currentMonth, setCurrentMonth] = useState(dayjs());
+  const [saidas, setSaidas] = useState(0);
+  const [entradas, setEntradas] = useState(0);
+  const [saldoTotal, setSaldoTotal] = useState(0);
 
   const prevMonth = () => {
     const previousMonth = currentMonth.subtract(1, "month");
@@ -21,6 +38,45 @@ function Home() {
     const nextMonth = currentMonth.add(1, "month");
     setCurrentMonth(nextMonth);
   };
+
+  const fetchSaldoCumulativoHome = async () => {
+    try {
+      const saidasSnapshot = await getDocs(collection(db, "saída"));
+
+      const saidas = saidasSnapshot.docs.map((doc) => doc.data().valor || 0);
+      console.log("retorno de saidas é", saidas);
+
+      const entradasSnapshot = await getDocs(collection(db, "entrada"));
+      const entradas = entradasSnapshot.docs.map(
+        (doc) => doc.data().valor || 0
+      );
+      console.log("retorno de entradas é", entradas);
+
+      const saidasTotal = saidas.reduce(
+        (accumulador, valor) => accumulador + valor,
+        0
+      );
+      console.log("retorno de saidasTotal é", saidasTotal);
+
+      const entradasTotal = entradas.reduce(
+        (accumulador, valor) => accumulador + valor,
+        0
+      );
+      console.log("retorno de entradasTotal é", entradasTotal);
+
+      setSaidas(saidasTotal);
+      setEntradas(entradasTotal);
+
+      setSaldoTotal(entradasTotal - saidasTotal);
+    } catch (e) {
+      console.error("Erro ao buscar documentos:", e);
+    }
+  };
+
+  //buscar valores quando o componente montar
+  useEffect(() => {
+    fetchSaldoCumulativoHome();
+  }, []);
 
   return (
     <div>
@@ -44,7 +100,9 @@ function Home() {
         <div className=" tw:pt-4 tw:pb-2 tw:px-5 tw:border tw:border-lightest-blue tw:rounded-lg">
           <div className="tw:flex tw:justify-center tw:mb-5 tw:mt-3">
             <Tituloh2 text="Saldo" />
-            <p className="tw:text-darkest-blue tw:text-3xl  ">: -R$30,00 </p>
+            <p className="tw:text-darkest-blue tw:text-3xl  ">
+              : R${saldoTotal}{" "}
+            </p>
           </div>
           <div className="tw:text-light-blue tw:text-xs tw:text-center tw:mt-2">
             {`Cumulativo do dia 1° de ${currentMonth
