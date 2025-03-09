@@ -7,9 +7,17 @@ import { GradientButton } from "../components/Buttons";
 import plusButton from "../images/+Button.png";
 import { Link } from "react-router-dom";
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs, addDoc } from "firebase/firestore";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
 
 dayjs.locale("pt-br");
+
+//verificar se o valor apresentado nos meses estão corretos
 
 const firebaseConfig = {
   apiKey: "AIzaSyCGK2Xq10StMJ_TOVhJqBqaLn5MlIWnRM0",
@@ -32,48 +40,50 @@ function Home() {
   const prevMonth = () => {
     const previousMonth = currentMonth.subtract(1, "month");
     setCurrentMonth(previousMonth);
+    fetchSaldoCumulativoHome();
   };
 
   const nexMonth = () => {
     const nextMonth = currentMonth.add(1, "month");
     setCurrentMonth(nextMonth);
+    fetchSaldoCumulativoHome();
   };
 
   const fetchSaldoCumulativoHome = async () => {
     try {
-      const saidasSnapshot = await getDocs(collection(db, "saída"));
+      const dataInicio = currentMonth.startOf("month").toDate();
+      const dataFim = currentMonth.endOf("month").toDate();
 
+      // Filtrando saídas
+      const saidasQuery = query(
+        collection(db, "saída"),
+        where("dataCriação", ">=", dataInicio),
+        where("dataCriação", "<=", dataFim)
+      );
+      const saidasSnapshot = await getDocs(saidasQuery);
       const saidas = saidasSnapshot.docs.map((doc) => doc.data().valor || 0);
-      console.log("retorno de saidas é", saidas);
+      const saidasTotal = saidas.reduce((acc, valor) => acc + valor, 0);
 
-      const entradasSnapshot = await getDocs(collection(db, "entrada"));
+      // Filtrando entradas
+      const entradasQuery = query(
+        collection(db, "entrada"),
+        where("dataCriação", ">=", dataInicio),
+        where("dataCriação", "<=", dataFim)
+      );
+      const entradasSnapshot = await getDocs(entradasQuery);
       const entradas = entradasSnapshot.docs.map(
         (doc) => doc.data().valor || 0
       );
-      console.log("retorno de entradas é", entradas);
-
-      const saidasTotal = saidas.reduce(
-        (accumulador, valor) => accumulador + valor,
-        0
-      );
-      console.log("retorno de saidasTotal é", saidasTotal);
-
-      const entradasTotal = entradas.reduce(
-        (accumulador, valor) => accumulador + valor,
-        0
-      );
-      console.log("retorno de entradasTotal é", entradasTotal);
+      const entradasTotal = entradas.reduce((acc, valor) => acc + valor, 0);
 
       setSaidas(saidasTotal);
       setEntradas(entradasTotal);
-
       setSaldoTotal(entradasTotal - saidasTotal);
     } catch (e) {
       console.error("Erro ao buscar documentos:", e);
     }
   };
 
-  //buscar valores quando o componente montar
   useEffect(() => {
     fetchSaldoCumulativoHome();
   }, []);
@@ -84,47 +94,45 @@ function Home() {
         <ChevronLeft
           onClick={prevMonth}
           size={48}
-          className=" tw:text-purple-blue tw:hover:text-saturated-blue transition-colors tw:hover:scale-150"
+          className="tw:text-purple-blue tw:hover:text-saturated-blue transition-colors tw:hover:scale-150"
         />
-        <h1 className="tw:text-dark-blue tw:text-3xl tw:font-semibold tw:text-nowrap ">
+        <h1 className="tw:text-dark-blue tw:text-3xl tw:font-semibold tw:text-nowrap">
           {currentMonth.format("MMMM - YYYY").toUpperCase()}
         </h1>
-
         <ChevronRight
           onClick={nexMonth}
           size={48}
-          className=" tw:text-purple-blue tw:hover:text-saturated-blue transition-colors tw:hover:scale-150"
+          className="tw:text-purple-blue tw:hover:text-saturated-blue transition-colors tw:hover:scale-150"
         />
       </nav>
       <section className="saldoContainer tw:mx-6">
-        <div className=" tw:pt-4 tw:pb-2 tw:px-5 tw:border tw:border-lightest-blue tw:rounded-lg">
+        <div className="tw:pt-4 tw:pb-2 tw:px-5 tw:border tw:border-lightest-blue tw:rounded-lg">
           <div className="tw:flex tw:justify-center tw:mb-5 tw:mt-3">
             <Tituloh2 text="Saldo" />
-            <p className="tw:text-darkest-blue tw:text-3xl  ">
-              : R${saldoTotal}{" "}
-            </p>
+            <p className="tw:text-darkest-blue tw:text-3xl">: R${saldoTotal}</p>
           </div>
           <div className="tw:text-light-blue tw:text-xs tw:text-center tw:mt-2">
             {`Cumulativo do dia 1° de ${currentMonth
               .format("MMMM [de] YYYY")
-              .toUpperCase()} ao dia de hoje (${dayjs().format("DD/MM/YYYY")})`}
+              .toUpperCase()} ao último dia do mês disponível ou ao dia mais recente `}
           </div>
         </div>
       </section>
       <div className="tw:mt-12">
         <Link to={"/extract"}>
-          <GradientButton className="tw:px-15 tw:py-3 tw:text-3xl ">
+          <GradientButton className="tw:px-15 tw:py-3 tw:text-3xl">
             Extrato
           </GradientButton>
         </Link>
       </div>
-      <nav className="tw:mt-20 ">
+      <nav className="tw:mt-20">
         <p className="tw:text-dark-blue">Adicionar Saída</p>
         <a className="tw:flex tw:justify-center tw:mt-4">
-          <img src={plusButton}></img>
+          <img src={plusButton} alt="Adicionar saída" />
         </a>
       </nav>
     </div>
   );
 }
+
 export default Home;
