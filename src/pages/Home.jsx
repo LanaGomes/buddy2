@@ -40,13 +40,11 @@ function Home() {
   const prevMonth = () => {
     const previousMonth = currentMonth.subtract(1, "month");
     setCurrentMonth(previousMonth);
-    fetchSaldoCumulativoHome();
   };
 
   const nexMonth = () => {
     const nextMonth = currentMonth.add(1, "month");
     setCurrentMonth(nextMonth);
-    fetchSaldoCumulativoHome();
   };
 
   const fetchSaldoCumulativoHome = async () => {
@@ -78,6 +76,7 @@ function Home() {
 
       setSaidas(saidasTotal);
       setEntradas(entradasTotal);
+
       setSaldoTotal(entradasTotal - saidasTotal);
     } catch (e) {
       console.error("Erro ao buscar documentos:", e);
@@ -86,7 +85,7 @@ function Home() {
 
   useEffect(() => {
     fetchSaldoCumulativoHome();
-  }, []);
+  }, [prevMonth, nexMonth]);
 
   return (
     <div>
