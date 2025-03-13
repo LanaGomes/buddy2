@@ -125,10 +125,10 @@ function Home() {
         </Link>
       </div>
       <nav className="tw:mt-20">
-        <p className="tw:text-dark-blue">Adicionar Saída</p>
-        <a className="tw:flex tw:justify-center tw:mt-4">
+        <p className="tw:text-dark-blue tw:text-2xl">Adicionar Saída</p>
+        <Link to={"/addSaida"} className="tw:flex tw:justify-center tw:mt-4">
           <img src={plusButton} alt="Adicionar saída" />
-        </a>
+        </Link>
       </nav>
     </div>
   );
