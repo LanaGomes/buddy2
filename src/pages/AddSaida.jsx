@@ -41,7 +41,7 @@ function AddSaida() {
         gastoRecorrente,
         parcelamento,
         parcelas,
-        timestamp: new Date(),
+        dataCriação: new Date(),
       });
       alert("Saída adicionada com sucesso!");
       {
@@ -103,7 +103,7 @@ function AddSaida() {
                     type="number"
                     id="valorInput"
                     value={valor}
-                    onChange={(e) => setValor(Number(e.target.value))}
+                    onChange={(e) => setValor(parseFloat(e.target.value))}
                   />
                 </span>
               </div>
@@ -187,6 +187,7 @@ function AddSaida() {
                   }
                 />
                 <label className="tw:ml-3" htmlFor="parcelamento">
+                  {/*colocar um campo onde apareça a soma de todas as parcelas*/}
                   Parcelamento
                 </label>
                 <div className="parcelas">
@@ -196,7 +197,7 @@ function AddSaida() {
                     autoComplete="parcelas-name"
                     className="tw:my-3 tw:bg-white tw:text-darkest-blue tw:border tw:border-lightest-blue tw:p-2 tw:text-xl tw:w-20"
                     value={parcelas}
-                    onChange={(e) => setParcelas(Number(e.target.value))}
+                    onChange={(e) => setParcelas(parseFloat(e.target.value))}
                   >
                     {generateParcelas()}
                   </select>
