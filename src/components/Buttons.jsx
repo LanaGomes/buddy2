@@ -1,6 +1,7 @@
-export function GradientButton({ children, onClick, className = "" }) {
+export function GradientButton({ type, children, onClick, className = "" }) {
   return (
     <button
+      type={type}
       onClick={onclick}
       className={` ${className} tw:rounded-full tw:font-medium tw:bg-gradient-to-r tw:from-darkGradient tw:to-lightGradient tw:text-darkest-blue`}
     >
