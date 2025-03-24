@@ -17,8 +17,6 @@ import {
 
 dayjs.locale("pt-br");
 
-//verificar se o valor apresentado nos meses estão corretos
-
 const firebaseConfig = {
   apiKey: "AIzaSyCGK2Xq10StMJ_TOVhJqBqaLn5MlIWnRM0",
   authDomain: "buddy-300c1.firebaseapp.com",
