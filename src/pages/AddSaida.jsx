@@ -1,8 +1,22 @@
 import Tituloh2 from "../components/Tituloh2";
 import { BorderBasic } from "../components/Borders";
 import { GradientButton } from "../components/Buttons";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { getFirestore, collection, addDoc } from "firebase/firestore";
 
 function AddSaida() {
+  const [tipo, setTipo] = useState("");
+  const [valor, setValor] = useState("");
+  const [descrição, setdescrição] = useState("");
+  const [categoria, setCategoria] = useState("");
+  const [gastoRecorrente, setGastoRecorrente] = useState(false);
+  const [parcelamento, setParcelamento] = useState(false);
+  const [parcelas, setParcelas] = useState(1);
+
+  const navigate = useNavigate();
+  const db = getFirestore();
+
   const generateParcelas = () => {
     const options = [];
     for (let i = 1; i <= 100; i++) {
@@ -15,6 +29,34 @@ function AddSaida() {
     return options;
   };
 
+  const addSaidaToFirestore = async (e) => {
+    e.preventDefault();
+
+    try {
+      await addDoc(collection(db, "saída"), {
+        tipo,
+        valor,
+        descrição,
+        categoria,
+        gastoRecorrente,
+        parcelamento,
+        parcelas,
+        timestamp: new Date(),
+      });
+      alert("Saída adicionada com sucesso!");
+      {
+        /*fazer componente de alerta*/
+      }
+      navigate(-1);
+    } catch (error) {
+      console.error("Erro ao adicionar saída: ", error);
+      alert("Erro ao adicionar saída.");
+      {
+        /*fazer componente de alerta*/
+      }
+    }
+  };
+
   return (
     <div>
       <header className="tw:my-3">
@@ -22,7 +64,10 @@ function AddSaida() {
       </header>
       <main className="tw:mx-3 ">
         <BorderBasic>
-          <form className="tw:px-4 tw:py-3  tw:text-left">
+          <form
+            className="tw:px-4 tw:py-3  tw:text-left"
+            onSubmit={addSaidaToFirestore}
+          >
             <div>
               <label className="tw:text-darkest-blue" htmlFor="tipoInput">
                 Categoria do valor a ser inserido
@@ -33,12 +78,14 @@ function AddSaida() {
                   name="tipoInput"
                   autoComplete="tipoInput-name"
                   className="tw:my-3 tw:bg-darkest-blue tw:text-white tw:p-2 tw:text-xl tw:w-full"
+                  value={tipo}
+                  onChange={(e) => setTipo(e.target.value)}
                 >
                   <option className="tw:bg-white tw:text-darkest-blue">
-                    Entrada
+                    entrada
                   </option>
                   <option className="tw:bg-white tw:text-darkest-blue">
-                    Saída
+                    saída
                   </option>
                 </select>
               </div>
@@ -49,16 +96,21 @@ function AddSaida() {
                     (Em caso de parcelamento, informar valor da parcela)
                   </p>
                 </label>
-                <input
-                  className="tw:w-full tw:border-lightest-blue tw:border tw:rounded-lg tw:bg-white tw:text-darkest-blue tw:p-2"
-                  type="text"
-                  id="valorInput"
-                />
+                <span className="tw:w-full tw:border-lightest-blue tw:border tw:rounded-lg tw:bg-white tw:text-darkest-blue tw:p-3">
+                  R$
+                  <input
+                    className="tw:w-2/3 tw:mt-3 tw:ml-2 tw:border-l  tw:border-lightest-blue"
+                    type="number"
+                    id="valorInput"
+                    value={valor}
+                    onChange={(e) => setValor(e.target.value)}
+                  />
+                </span>
               </div>
               <div className="tw:mt-6">
                 <label
                   className="tw:text-darkest-blue"
-                  htmlFor="descricaoInput"
+                  htmlFor="descriçãoInput"
                 >
                   Descrição da entrada ou saída
                 </label>
@@ -66,6 +118,8 @@ function AddSaida() {
                   className="tw:w-full tw:border-lightest-blue tw:border tw:rounded-lg tw:bg-white tw:text-darkest-blue tw:p-2"
                   type="text"
                   id="descricaoInput"
+                  value={descrição}
+                  onChange={(e) => setdescrição(e.target.value)}
                 />
               </div>
             </div>
@@ -78,6 +132,8 @@ function AddSaida() {
                 name="categoriaSaida"
                 autoComplete="categoriaSaida-name"
                 className="tw:my-3 tw:bg-white tw:text-darkest-blue tw:border tw:border-lightest-blue tw:p-2 tw:text-xl tw:w-full"
+                value={categoria}
+                onChange={(e) => setCategoria(e.target.value)}
               >
                 <option className="tw:bg-white tw:text-darkest-blue">
                   Casa
@@ -98,6 +154,8 @@ function AddSaida() {
                   type="checkbox"
                   id="gastoRecorrente"
                   name="gastoRecorrente"
+                  checked={gastoRecorrente}
+                  onChange={(e) => setGastoRecorrente(e.target.checked)}
                 />
                 <label className="tw:ml-3" htmlFor="gastoRecorrente">
                   Gasto Recorrente
@@ -109,6 +167,8 @@ function AddSaida() {
                   type="checkbox"
                   id="parcelamento"
                   name="parcelamento"
+                  checked={parcelamento}
+                  onChange={(e) => setParcelamento(e.target.checked)}
                 />
                 <label className="tw:ml-3" htmlFor="parcelamento">
                   Parcelamento
@@ -119,6 +179,8 @@ function AddSaida() {
                     name="parcelas"
                     autoComplete="parcelas-name"
                     className="tw:my-3 tw:bg-white tw:text-darkest-blue tw:border tw:border-lightest-blue tw:p-2 tw:text-xl tw:w-20"
+                    value={parcelas}
+                    onChange={(e) => setParcelas(Number(e.target.value))}
                   >
                     {generateParcelas()}
                   </select>
@@ -127,16 +189,20 @@ function AddSaida() {
                   </label>
                 </div>
               </div>
-              <div className="tw:mt-6 tw:flex tw:justify-around">
-                <GradientButton className="tw:py-2 tw:px-7 ">
-                  Salvar
-                </GradientButton>
-                <GradientButton className="tw:py-2 tw:px-7 ">
-                  Voltar
-                </GradientButton>
-              </div>
+            </div>
+            <div className="tw:flex tw:justify-center">
+              {" "}
+              <GradientButton className="tw:py-2 tw:px-7 tw:mt-3  ">
+                Salvar
+              </GradientButton>
             </div>
           </form>
+          <div className="tw:flex tw:justify-center tw:mt-3 tw:mb-4">
+            <Link to={"/"} className="tw:text-dark-blue ">
+              {/*fazer o retorno a pagina anterior funcionar - pag recarrega e perde-se o historico*/}
+              Voltar
+            </Link>
+          </div>
         </BorderBasic>
       </main>
     </div>
