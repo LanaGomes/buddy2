@@ -99,11 +99,11 @@ function AddSaida() {
                 <span className="tw:w-full tw:border-lightest-blue tw:border tw:rounded-lg tw:bg-white tw:text-darkest-blue tw:p-3">
                   R$
                   <input
-                    className="tw:w-2/3 tw:mt-3 tw:ml-2 tw:border-l  tw:border-lightest-blue"
+                    className="tw:w-2/3 tw:mt-3 tw:ml-0.5"
                     type="number"
                     id="valorInput"
                     value={valor}
-                    onChange={(e) => setValor(e.target.value)}
+                    onChange={(e) => setValor(Number(e.target.value))}
                   />
                 </span>
               </div>
@@ -148,27 +148,43 @@ function AddSaida() {
                   Adicionar ou editar categoria(s)
                 </option>
               </select>
-              <div className="tw:text-xl tw:text-darkest-blue tw:pb-3 tw:pt-6 tw:border-b tw:border-lightest-blue">
+              <div
+                className={`${
+                  parcelamento
+                    ? "tw:hidden"
+                    : "tw:text-xl tw:text-darkest-blue tw:pb-3 tw:pt-6 tw:border-b tw:border-lightest-blue"
+                }`}
+              >
                 <input
                   className="tw:w-7 tw:h-7 tw:border tw:bg-white tw:align-middle"
                   type="checkbox"
                   id="gastoRecorrente"
                   name="gastoRecorrente"
                   checked={gastoRecorrente}
-                  onChange={(e) => setGastoRecorrente(e.target.checked)}
+                  onChange={(e) =>
+                    setGastoRecorrente(e.target.checked) &&
+                    setParcelamento(false)
+                  }
                 />
                 <label className="tw:ml-3" htmlFor="gastoRecorrente">
                   Gasto Recorrente
                 </label>
               </div>
-              <div className="tw:text-xl tw:text-darkest-blue tw:pb-3 tw:pt-6 tw:border-b tw:border-lightest-blue">
+              <div
+                className={`${
+                  gastoRecorrente ? "tw:hidden" : ""
+                } tw:text-xl tw:text-darkest-blue tw:pb-3 tw:pt-6 tw:border-b tw:border-lightest-blue`}
+              >
                 <input
                   className="tw:w-7 tw:h-7 tw:border tw:bg-white tw:align-middle"
                   type="checkbox"
                   id="parcelamento"
                   name="parcelamento"
                   checked={parcelamento}
-                  onChange={(e) => setParcelamento(e.target.checked)}
+                  onChange={(e) =>
+                    setParcelamento(e.target.checked) &&
+                    setGastoRecorrente(false)
+                  }
                 />
                 <label className="tw:ml-3" htmlFor="parcelamento">
                   Parcelamento
