@@ -83,7 +83,7 @@ function Home() {
 
   useEffect(() => {
     fetchSaldoCumulativoHome();
-  }, [prevMonth, nexMonth]);
+  }, [currentMonth, entradas, saidas]);
 
   return (
     <div>
